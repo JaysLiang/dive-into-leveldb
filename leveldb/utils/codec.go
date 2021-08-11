@@ -25,5 +25,30 @@ func DecodeVarUint32(buf []byte) (uint32, int) {
 }
 
 func DecodeFixed32(data []byte) uint32 {
-	return uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24
+	return uint32(data[0]) | uint32(data[1])<<8 |
+		uint32(data[2])<<16 | uint32(data[3])<<24
+}
+
+func EncodeFixed32(src uint32, dst []byte) {
+	dst[0] = byte(src)
+	dst[1] = byte(src >> 8)
+	dst[2] = byte(src >> 16)
+	dst[3] = byte(src >> 24)
+}
+
+func EncodeFixed64(src uint64, dst []byte) {
+	dst[0] = byte(src)
+	dst[1] = byte(src >> 8)
+	dst[2] = byte(src >> 16)
+	dst[3] = byte(src >> 24)
+	dst[4] = byte(src >> 32)
+	dst[5] = byte(src >> 40)
+	dst[6] = byte(src >> 48)
+	dst[7] = byte(src >> 56)
+}
+func DecodeFixed64(data []byte) uint64 {
+	return uint64(data[0]) | uint64(data[1])<<8 |
+		uint64(data[2])<<16 | uint64(data[3])<<24 |
+		uint64(data[4])<<32 | uint64(data[5])<<40 |
+		uint64(data[6])<<48 | uint64(data[7])<<56
 }
