@@ -107,4 +107,11 @@ type LookupKey struct {
 	data     []byte
 }
 
-func NewLookupKey() &L
+func NewLookupKey() *LookupKey {
+	return &LookupKey{
+		Start:    0,
+		KeyStart: 0,
+		End:      0,
+		data:     nil,
+	}
+}
