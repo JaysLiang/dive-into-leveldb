@@ -5,18 +5,20 @@ import (
 	"github.com/JayLiang/dive-into-leveldb/leveldb/utils"
 )
 
+type ValueType byte
+
 const (
-	TypeKey      = 1
-	TypeDeletion = 0
+	TypeDeletion ValueType = 0x00
+	TypeKey      ValueType = 0x01
 )
 
 type ParsedInternalKey struct {
 	UserKey Slice
 	SeqNum  uint64
-	ValType byte
+	ValType ValueType
 }
 
-func PackSeqNumAndType(seqNum uint64, typ byte) uint64 {
+func PackSeqNumAndType(seqNum uint64, typ ValueType) uint64 {
 	return seqNum<<8 | uint64(typ)
 }
 
@@ -30,7 +32,7 @@ func ParseInternKey(data []byte) (*ParsedInternalKey, bool) {
 			Data: data[:len(data)-8],
 		},
 		SeqNum:  fixed64 >> 8,
-		ValType: byte(fixed64),
+		ValType: ValueType(fixed64),
 	}, true
 }
 
@@ -38,7 +40,7 @@ func NewParsedInternalKey(slice Slice, seq uint64, typ int) *ParsedInternalKey {
 	return &ParsedInternalKey{
 		UserKey: slice,
 		SeqNum:  seq,
-		ValType: byte(typ),
+		ValType: ValueType(typ),
 	}
 }
 
@@ -107,11 +109,23 @@ type LookupKey struct {
 	data     []byte
 }
 
-func NewLookupKey() *LookupKey {
+func NewLookupKey(userKey Slice, SeqNum uint64) *LookupKey {
 	return &LookupKey{
 		Start:    0,
 		KeyStart: 0,
 		End:      0,
 		data:     nil,
 	}
+}
+
+func (l *LookupKey) MemTableKey() *Slice {
+	return &Slice{Data: l.data[l.Start:l.End]}
+}
+
+func (l *LookupKey) InternalKey() *Slice {
+	return &Slice{Data: l.data[l.KeyStart:l.End]}
+}
+
+func (l *LookupKey) UserKey() *Slice {
+	return &Slice{Data: l.data[l.Start:l.End]}
 }

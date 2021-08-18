@@ -15,4 +15,7 @@
   ```
 # data struct
     internal key: 
-        |varint length|   
+        |key string| (seq|type) |
+    Lookup Key
+        |varint length | key string| (seq|type)|
+    that means internal is part of Lookup key
